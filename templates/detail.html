@@ -86,7 +86,7 @@
                     <th>Location</th>
                     <td>
                         <a href="https://www.openstreetmap.org/?mlat={{ church['lat'] }}&mlon={{ church['lon'] }}#map=17/{{ church['lat'] }}/{{ church['lon'] }}" target="_blank" rel="noopener">
-                            View on Map ({{ church["lat"] }}, {{ church["lon"] }})
+                            View on OpenStreetMap ({{ church["lat"] }}, {{ church["lon"] }})
                         </a>
                     </td>
                 </tr>
@@ -101,10 +101,34 @@
                 </tr>
             </table>
         </section>
+
+        {% if church["lat"] and church["lon"] %}
+        <section class="map-section">
+            <h2>Location</h2>
+            <div id="map"></div>
+        </section>
+        {% endif %}
     </main>
 
     <footer>
         <p>Data source: <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener">OpenStreetMap</a> — ODbL License</p>
     </footer>
+
+    {% if church["lat"] and church["lon"] %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        var lat = {{ church["lat"] }};
+        var lon = {{ church["lon"] }};
+        var map = L.map('map').setView([lat, lon], 16);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }).addTo(map);
+        L.marker([lat, lon]).addTo(map)
+            .bindPopup('{{ church["name"] | replace("'", "\\'") }}')
+            .openPopup();
+    </script>
+    {% endif %}
 </body>
 </html>

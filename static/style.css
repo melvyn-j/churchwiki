@@ -234,6 +234,24 @@ td.name a:hover {
     font-size: 0.95rem;
 }
 
+/* Map */
+.map-section {
+    margin-top: 1.5rem;
+}
+
+.map-section h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: #2c3e50;
+}
+
+#map {
+    width: 100%;
+    height: 300px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
 /* Footer */
 footer {
     text-align: center;
