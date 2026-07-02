@@ -9,7 +9,7 @@
 <body>
     <header>
         <h1>ChurchWiki Canada</h1>
-        <p class="subtitle">Browse {{ total | default(0) }} registered churches and religious organizations across Canada</p>
+        <p class="subtitle">Browse {{ total | default(0) }} Christian churches across Canada</p>
     </header>
 
     <main>
@@ -22,14 +22,14 @@
                     value="{{ search }}"
                     aria-label="Search churches"
                 >
-                <select name="province" aria-label="Filter by province">
-                    <option value="">All Provinces</option>
-                    {% for p in provinces %}
-                    <option value="{{ p }}" {% if p == province %}selected{% endif %}>{{ p }}</option>
+                <select name="denomination" aria-label="Filter by denomination">
+                    <option value="">All Denominations</option>
+                    {% for d in denominations %}
+                    <option value="{{ d }}" {% if d == denomination %}selected{% endif %}>{{ d }}</option>
                     {% endfor %}
                 </select>
                 <button type="submit">Search</button>
-                {% if search or province %}
+                {% if search or denomination %}
                 <a href="/" class="clear-btn">Clear</a>
                 {% endif %}
             </form>
@@ -45,9 +45,8 @@
                     <tr>
                         <th>#</th>
                         <th>Name</th>
+                        <th>Denomination</th>
                         <th>City</th>
-                        <th>Province</th>
-                        <th>Postal Code</th>
                         <th>Address</th>
                     </tr>
                 </thead>
@@ -55,15 +54,14 @@
                     {% for church in churches %}
                     <tr>
                         <td>{{ (page - 1) * 50 + loop.index }}</td>
-                        <td class="name"><a href="/church/{{ church['BN'] }}">{{ church["Legal Name"] or church["Account Name"] }}</a></td>
-                        <td>{{ church["City"] }}</td>
-                        <td>{{ church["Province"] }}</td>
-                        <td>{{ church["Postal Code"] }}</td>
-                        <td>{{ church["Address Line 1"] }}</td>
+                        <td class="name"><a href="/church/{{ church['osm_id'] }}">{{ church["name"] }}</a></td>
+                        <td>{{ church["denomination"] }}</td>
+                        <td>{{ church["addr_city"] }}</td>
+                        <td>{{ church["address"] }}</td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="6" class="no-results">No churches found matching your criteria.</td>
+                        <td colspan="5" class="no-results">No churches found matching your criteria.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -73,36 +71,36 @@
         {% if total_pages > 1 %}
         <nav class="pagination" aria-label="Page navigation">
             {% if page > 1 %}
-            <a href="/?page={{ page - 1 }}&province={{ province }}&search={{ search }}">← Previous</a>
+            <a href="/?page={{ page - 1 }}&denomination={{ denomination }}&search={{ search }}">← Previous</a>
             {% endif %}
 
             {% set start_page = [1, page - 3] | max %}
             {% set end_page = [total_pages, page + 3] | min %}
 
             {% if start_page > 1 %}
-            <a href="/?page=1&province={{ province }}&search={{ search }}">1</a>
+            <a href="/?page=1&denomination={{ denomination }}&search={{ search }}">1</a>
             {% if start_page > 2 %}<span class="dots">...</span>{% endif %}
             {% endif %}
 
             {% for p in range(start_page, end_page + 1) %}
-            <a href="/?page={{ p }}&province={{ province }}&search={{ search }}"
+            <a href="/?page={{ p }}&denomination={{ denomination }}&search={{ search }}"
                class="{% if p == page %}active{% endif %}">{{ p }}</a>
             {% endfor %}
 
             {% if end_page < total_pages %}
             {% if end_page < total_pages - 1 %}<span class="dots">...</span>{% endif %}
-            <a href="/?page={{ total_pages }}&province={{ province }}&search={{ search }}">{{ total_pages }}</a>
+            <a href="/?page={{ total_pages }}&denomination={{ denomination }}&search={{ search }}">{{ total_pages }}</a>
             {% endif %}
 
             {% if page < total_pages %}
-            <a href="/?page={{ page + 1 }}&province={{ province }}&search={{ search }}">Next →</a>
+            <a href="/?page={{ page + 1 }}&denomination={{ denomination }}&search={{ search }}">Next →</a>
             {% endif %}
         </nav>
         {% endif %}
     </main>
 
     <footer>
-        <p>Data source: <a href="https://open.canada.ca/data/en/dataset/05b3abd0-e70f-4b3b-a9c5-acc436bd15b6" target="_blank" rel="noopener">CRA 2023 List of Charities</a> — Open Government Licence - Canada</p>
+        <p>Data source: <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener">OpenStreetMap</a> — ODbL License</p>
     </footer>
 </body>
 </html>

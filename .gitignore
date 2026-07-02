@@ -29,5 +29,6 @@ Thumbs.db
 *.log
 .vercel
 
-# Data files (large CSVs from CRA)
+# Data files (large CSVs/JSON from data sources)
 data/cra_charities_*.csv
+data/osm_churches_raw.json

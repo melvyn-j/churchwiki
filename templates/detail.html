@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ church["Legal Name"] or church["Account Name"] }} - ChurchWiki Canada</title>
+    <title>{{ church["name"] }} - ChurchWiki Canada</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <header>
-        <h1>{{ church["Legal Name"] or church["Account Name"] }}</h1>
-        <p class="subtitle">Church Details</p>
+        <h1>{{ church["name"] }}</h1>
+        <p class="subtitle">{{ church["denomination"] if church["denomination"] else "Christian Church" }}</p>
     </header>
 
     <main>
@@ -18,60 +18,93 @@
         <section class="detail-card">
             <table class="detail-table">
                 <tr>
-                    <th>Legal Name</th>
-                    <td>{{ church["Legal Name"] }}</td>
+                    <th>Name</th>
+                    <td>{{ church["name"] }}</td>
                 </tr>
-                {% if church["Account Name"] %}
+                {% if church["denomination"] %}
                 <tr>
-                    <th>Account Name</th>
-                    <td>{{ church["Account Name"] }}</td>
+                    <th>Denomination</th>
+                    <td>{{ church["denomination"] }}</td>
+                </tr>
+                {% endif %}
+                {% if church["address"] %}
+                <tr>
+                    <th>Address</th>
+                    <td>{{ church["address"] }}</td>
+                </tr>
+                {% endif %}
+                {% if church["addr_city"] %}
+                <tr>
+                    <th>City</th>
+                    <td>{{ church["addr_city"] }}</td>
+                </tr>
+                {% endif %}
+                {% if church["addr_province"] %}
+                <tr>
+                    <th>Province</th>
+                    <td>{{ church["addr_province"] }}</td>
+                </tr>
+                {% endif %}
+                {% if church["addr_postcode"] %}
+                <tr>
+                    <th>Postal Code</th>
+                    <td>{{ church["addr_postcode"] }}</td>
+                </tr>
+                {% endif %}
+                {% if church["phone"] %}
+                <tr>
+                    <th>Phone</th>
+                    <td><a href="tel:{{ church['phone'] }}">{{ church["phone"] }}</a></td>
+                </tr>
+                {% endif %}
+                {% if church["website"] %}
+                <tr>
+                    <th>Website</th>
+                    <td><a href="{{ church['website'] }}" target="_blank" rel="noopener">{{ church["website"] }}</a></td>
+                </tr>
+                {% endif %}
+                {% if church["email"] %}
+                <tr>
+                    <th>Email</th>
+                    <td><a href="mailto:{{ church['email'] }}">{{ church["email"] }}</a></td>
+                </tr>
+                {% endif %}
+                {% if church["opening_hours"] %}
+                <tr>
+                    <th>Hours</th>
+                    <td>{{ church["opening_hours"] }}</td>
+                </tr>
+                {% endif %}
+                {% if church["wheelchair"] %}
+                <tr>
+                    <th>Wheelchair Access</th>
+                    <td>{{ church["wheelchair"] }}</td>
+                </tr>
+                {% endif %}
+                {% if church["lat"] and church["lon"] %}
+                <tr>
+                    <th>Location</th>
+                    <td>
+                        <a href="https://www.openstreetmap.org/?mlat={{ church['lat'] }}&mlon={{ church['lon'] }}#map=17/{{ church['lat'] }}/{{ church['lon'] }}" target="_blank" rel="noopener">
+                            View on Map ({{ church["lat"] }}, {{ church["lon"] }})
+                        </a>
+                    </td>
                 </tr>
                 {% endif %}
                 <tr>
-                    <th>Business Number (BN)</th>
-                    <td>{{ church["BN"] }}</td>
-                </tr>
-                <tr>
-                    <th>Category</th>
-                    <td>{{ church["Category"] }}</td>
-                </tr>
-                <tr>
-                    <th>Sub Category</th>
-                    <td>{{ church["Sub Category"] }}</td>
-                </tr>
-                <tr>
-                    <th>Designation</th>
-                    <td>{{ church["Designation"] }}</td>
-                </tr>
-                <tr>
-                    <th>Address</th>
+                    <th>OSM ID</th>
                     <td>
-                        {{ church["Address Line 1"] }}
-                        {% if church["Address Line 2"] %}<br>{{ church["Address Line 2"] }}{% endif %}
+                        <a href="https://www.openstreetmap.org/{{ church['osm_id'] }}" target="_blank" rel="noopener">
+                            {{ church["osm_id"] }}
+                        </a>
                     </td>
-                </tr>
-                <tr>
-                    <th>City</th>
-                    <td>{{ church["City"] }}</td>
-                </tr>
-                <tr>
-                    <th>Province</th>
-                    <td>{{ church["Province"] }}</td>
-                </tr>
-                <tr>
-                    <th>Postal Code</th>
-                    <td>{{ church["Postal Code"] }}</td>
-                </tr>
-                <tr>
-                    <th>Country</th>
-                    <td>{{ church["Country"] }}</td>
                 </tr>
             </table>
         </section>
     </main>
 
     <footer>
-        <p>Data source: <a href="https://open.canada.ca/data/en/dataset/05b3abd0-e70f-4b3b-a9c5-acc436bd15b6" target="_blank" rel="noopener">CRA 2023 List of Charities</a> — Open Government Licence - Canada</p>
+        <p>Data source: <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener">OpenStreetMap</a> — ODbL License</p>
     </footer>
 </body>
 </html>

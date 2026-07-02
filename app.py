@@ -1,7 +1,7 @@
 """
 ChurchWiki - A simple FastAPI + Jinja2 app to browse Canadian churches.
 
-Data source: CRA 2023 List of Charities (Open Government Licence - Canada)
+Data source: OpenStreetMap via Overpass API (ODbL license)
 Run: python app.py
 """
 
@@ -31,7 +31,7 @@ def load_data():
     global churches_df
     if not os.path.exists(DATA_PATH):
         print(f"ERROR: Church data not found at {DATA_PATH}")
-        print("Run 'python fetch_churches.py' first to download the data.")
+        print("Run 'python fetch_osm_churches.py' first to download the data.")
         return
 
     churches_df = pd.read_csv(DATA_PATH, dtype=str, low_memory=False)
@@ -43,22 +43,22 @@ def load_data():
 async def home(
     request: Request,
     page: int = Query(1, ge=1),
-    province: str = Query("", alias="province"),
+    denomination: str = Query("", alias="denomination"),
     search: str = Query("", alias="search"),
 ):
-    """Main page: paginated list of churches with search and province filter."""
+    """Main page: paginated list of churches with search and denomination filter."""
     per_page = 50
     df = churches_df.copy()
 
-    # Filter by province
-    if province:
-        df = df[df["Province"].str.upper() == province.upper()]
+    # Filter by denomination
+    if denomination:
+        df = df[df["denomination"].str.lower() == denomination.lower()]
 
     # Search by name or city
     if search:
         mask = (
-            df["Legal Name"].str.lower().str.contains(search.lower(), na=False)
-            | df["City"].str.lower().str.contains(search.lower(), na=False)
+            df["name"].str.lower().str.contains(search.lower(), na=False)
+            | df["addr_city"].str.lower().str.contains(search.lower(), na=False)
         )
         df = df[mask]
 
@@ -72,8 +72,9 @@ async def home(
 
     churches = page_data.to_dict(orient="records")
 
-    # Get unique provinces for filter dropdown
-    provinces = sorted(churches_df["Province"].unique())
+    # Get unique denominations for filter dropdown
+    denoms = sorted(churches_df["denomination"].unique())
+    denoms = [d for d in denoms if d]  # remove empty
 
     return templates.TemplateResponse(
         "index.html",
@@ -83,17 +84,17 @@ async def home(
             "page": page,
             "total_pages": total_pages,
             "total": total,
-            "province": province,
+            "denomination": denomination,
             "search": search,
-            "provinces": provinces,
+            "denominations": denoms,
         },
     )
 
 
-@app.get("/church/{bn}", response_class=HTMLResponse)
-async def church_detail(request: Request, bn: str):
-    """Detail page for a single church by BN (Business Number)."""
-    row = churches_df[churches_df["BN"] == bn]
+@app.get("/church/{osm_id:path}", response_class=HTMLResponse)
+async def church_detail(request: Request, osm_id: str):
+    """Detail page for a single church by OSM ID."""
+    row = churches_df[churches_df["osm_id"] == osm_id]
     if row.empty:
         return HTMLResponse("<h1>Church not found</h1>", status_code=404)
 

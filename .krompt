@@ -3,5 +3,58 @@
 
 
 
+1:
+is there any public church database in canada for all churches, 
+so that i can collect the data for my application?
 
----------------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+
+2:
+yes in python
+
+------------------------------------------------------------------------
+
+3:
+i want to create a simple fastAPI and jinja based application out of this database.
+ The main page should have all the churches as a list
+
+i need to run the server by python app.py
+
+------------------------------------------------------------------------
+
+4:
+i cna run it myself
+
+------------------------------------------------------------------------
+
+5:
+all churches in the list need to be a link that takes the user to a separate page 
+with that church's info. 
+
+------------------------------------------------------------------------
+
+6:
+https://www.palpungfoundation.ca/
+
+
+
+i do get non-Christian charitable trust like the above link in the existing database.
+
+i want to clean those things and keep only Christian churches.
+
+------------------------------------------------------------------------
+
+7:
+i see that all the records are associated with christian charitable trusts,
+ but is there any third-party database that is not government related,
+  so that i can collect only church info, not associated with a trust
+
+
+------------------------------------------------------------------------
+
+8:
+yes
+
+------------------------------------------------------------------------
+9:
