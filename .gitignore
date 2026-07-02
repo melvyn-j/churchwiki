@@ -28,3 +28,6 @@ Thumbs.db
 # Logs
 *.log
 .vercel
+
+# Data files (large CSVs from CRA)
+data/cra_charities_*.csv
