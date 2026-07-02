@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ church["Legal Name"] or church["Account Name"] }} - ChurchWiki Canada</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>{{ church["Legal Name"] or church["Account Name"] }}</h1>
+        <p class="subtitle">Church Details</p>
+    </header>
+
+    <main>
+        <a href="/" class="back-link">← Back to list</a>
+
+        <section class="detail-card">
+            <table class="detail-table">
+                <tr>
+                    <th>Legal Name</th>
+                    <td>{{ church["Legal Name"] }}</td>
+                </tr>
+                {% if church["Account Name"] %}
+                <tr>
+                    <th>Account Name</th>
+                    <td>{{ church["Account Name"] }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <th>Business Number (BN)</th>
+                    <td>{{ church["BN"] }}</td>
+                </tr>
+                <tr>
+                    <th>Category</th>
+                    <td>{{ church["Category"] }}</td>
+                </tr>
+                <tr>
+                    <th>Sub Category</th>
+                    <td>{{ church["Sub Category"] }}</td>
+                </tr>
+                <tr>
+                    <th>Designation</th>
+                    <td>{{ church["Designation"] }}</td>
+                </tr>
+                <tr>
+                    <th>Address</th>
+                    <td>
+                        {{ church["Address Line 1"] }}
+                        {% if church["Address Line 2"] %}<br>{{ church["Address Line 2"] }}{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>City</th>
+                    <td>{{ church["City"] }}</td>
+                </tr>
+                <tr>
+                    <th>Province</th>
+                    <td>{{ church["Province"] }}</td>
+                </tr>
+                <tr>
+                    <th>Postal Code</th>
+                    <td>{{ church["Postal Code"] }}</td>
+                </tr>
+                <tr>
+                    <th>Country</th>
+                    <td>{{ church["Country"] }}</td>
+                </tr>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>Data source: <a href="https://open.canada.ca/data/en/dataset/05b3abd0-e70f-4b3b-a9c5-acc436bd15b6" target="_blank" rel="noopener">CRA 2023 List of Charities</a> — Open Government Licence - Canada</p>
+    </footer>
+</body>
+</html>

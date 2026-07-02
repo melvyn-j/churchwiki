@@ -90,5 +90,19 @@ async def home(
     )
 
 
+@app.get("/church/{bn}", response_class=HTMLResponse)
+async def church_detail(request: Request, bn: str):
+    """Detail page for a single church by BN (Business Number)."""
+    row = churches_df[churches_df["BN"] == bn]
+    if row.empty:
+        return HTMLResponse("<h1>Church not found</h1>", status_code=404)
+
+    church = row.iloc[0].to_dict()
+    return templates.TemplateResponse(
+        "detail.html",
+        {"request": request, "church": church},
+    )
+
+
 if __name__ == "__main__":
     uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)

@@ -55,7 +55,7 @@
                     {% for church in churches %}
                     <tr>
                         <td>{{ (page - 1) * 50 + loop.index }}</td>
-                        <td class="name">{{ church["Legal Name"] or church["Account Name"] }}</td>
+                        <td class="name"><a href="/church/{{ church['BN'] }}">{{ church["Legal Name"] or church["Account Name"] }}</a></td>
                         <td>{{ church["City"] }}</td>
                         <td>{{ church["Province"] }}</td>
                         <td>{{ church["Postal Code"] }}</td>

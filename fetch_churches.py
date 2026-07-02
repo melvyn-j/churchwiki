@@ -30,12 +30,43 @@ CHURCHES_CSV = os.path.join(DATA_DIR, "churches_canada.csv")
 # 0070 = Support of religion (missionary, religious education, fellowships)
 RELIGION_CATEGORY_CODES = ["0030", "0070"]
 
-# Keywords to catch religion orgs that may be in other categories
-RELIGION_KEYWORDS = [
-    "church", "churches", "mosque", "masjid", "temple",
-    "synagogue", "parish", "congregation", "chapel",
-    "gurdwara", "mandir", "tabernacle", "ministry",
-    "cathedral", "basilica", "abbey",
+# Keywords that INCLUDE an org (Christian-specific terms)
+CHRISTIAN_KEYWORDS = [
+    "church", "churches", "parish", "chapel", "cathedral",
+    "basilica", "abbey", "tabernacle", "gospel",
+    "baptist", "pentecostal", "presbyterian", "methodist",
+    "lutheran", "anglican", "catholic", "orthodox",
+    "evangelical", "adventist", "mennonite", "brethren",
+    "apostolic", "nazarene", "salvation army", "assemblies of god",
+    "vineyard", "calvary", "bethel", "christian",
+    "diocese", "archdiocese", "deanery", "pastoral",
+    "ministry", "ministries", "bible", "biblical",
+    "congregation", "fellowship", "worship centre",
+    "worship center", "mission", "missions",
+    "alliance church", "united church", "free church",
+    "community church", "grace church", "faith church",
+    "jesus", "christ", "lord", "holy spirit",
+    "église", "eglise", "paroisse", "chapelle",
+    "catholique", "évangélique", "evangelique",
+]
+
+# Keywords that EXCLUDE an org (non-Christian religious orgs)
+EXCLUDE_KEYWORDS = [
+    "mosque", "masjid", "islamic", "islam", "muslim", "quran",
+    "al-salam", "alsalam", "al salam", "salaam",
+    "temple", "mandir", "hindu", "hinduism", "krishna", "swami",
+    "aumkara", "vedic", "vedanta", "ashram",
+    "gurdwara", "sikh", "khalsa", "nanak",
+    "synagogue", "jewish", "torah", "hebrew", "chabad", "yeshiva",
+    "buddhist", "buddha", "dharma", "sangha", "zen", "tibetan",
+    "palpung", "shambhala", "vipassana", "rinpoche",
+    "baha'i", "bahai",
+    "jain", "zoroastrian",
+    "wiccan", "pagan",
+    "unitarian universalist",
+    "scientology",
+    "kabir", "sufi", "dervish",
+    "raelian", "rastafari",
 ]
 
 
@@ -67,11 +98,12 @@ def filter_churches(
     category_only: bool = False,
 ) -> pd.DataFrame:
     """
-    Filter the CRA charities CSV for religious organizations / churches.
+    Filter the CRA charities CSV for Christian churches only.
 
-    Uses two strategies:
-      1. Category-based: Categories 0030 (Religion) and 0070 (Support of Religion)
-      2. Keyword-based: Catches churches in other categories by name matching
+    Strategy:
+      1. Start with religion categories (0030, 0070)
+      2. Also catch Christian orgs in other categories via keyword matching
+      3. Exclude non-Christian religious organizations (mosques, temples, etc.)
 
     Args:
         input_path: Path to the full CRA identification CSV.
@@ -89,6 +121,8 @@ def filter_churches(
     # Normalize column names (strip whitespace)
     df.columns = df.columns.str.strip()
 
+    name_lower = df["Legal Name"].fillna("").str.lower()
+
     # Filter by Religion categories (0030 and 0070)
     category_mask = df["Category"].isin(RELIGION_CATEGORY_CODES)
     print(f"  Religion categories (0030 + 0070): {category_mask.sum():,}")
@@ -96,20 +130,32 @@ def filter_churches(
     if category_only:
         churches_df = df[category_mask].copy()
     else:
-        # Also match by name keywords (catches churches filed under other categories)
-        name_lower = df["Legal Name"].fillna("").str.lower()
-        keyword_pattern = "|".join(RELIGION_KEYWORDS)
-        keyword_mask = name_lower.str.contains(keyword_pattern, na=False)
-        print(f"  Keyword matches (across all categories): {keyword_mask.sum():,}")
+        # Also match Christian keywords in other categories
+        christian_pattern = "|".join(CHRISTIAN_KEYWORDS)
+        keyword_mask = name_lower.str.contains(christian_pattern, na=False)
+        print(f"  Christian keyword matches (all categories): {keyword_mask.sum():,}")
 
-        # Combine: category OR keyword
+        # Combine: category OR christian keyword
         combined_mask = category_mask | keyword_mask
         churches_df = df[combined_mask].copy()
-
-        # Remove duplicates (some will match both)
         churches_df = churches_df.drop_duplicates(subset=["BN"])
 
-    print(f"  Total unique religious orgs after filter: {len(churches_df):,}")
+    print(f"  Before exclusion: {len(churches_df):,}")
+
+    # Exclude non-Christian religious organizations
+    exclude_pattern = "|".join(EXCLUDE_KEYWORDS)
+    exclude_name_lower = churches_df["Legal Name"].fillna("").str.lower()
+    account_name_lower = churches_df["Account Name"].fillna("").str.lower()
+    # Check both Legal Name and Account Name for exclusion
+    exclude_mask = (
+        exclude_name_lower.str.contains(exclude_pattern, na=False)
+        | account_name_lower.str.contains(exclude_pattern, na=False)
+    )
+    excluded_count = exclude_mask.sum()
+    churches_df = churches_df[~exclude_mask].copy()
+
+    print(f"  Excluded (non-Christian): {excluded_count:,}")
+    print(f"  Final Christian churches: {len(churches_df):,}")
 
     # Save filtered results
     churches_df.to_csv(output_path, index=False)

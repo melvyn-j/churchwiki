@@ -180,6 +180,60 @@ tr:hover {
     color: #999;
 }
 
+td.name a {
+    color: #2c3e50;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+td.name a:hover {
+    text-decoration: underline;
+    color: #3498db;
+}
+
+/* Detail page */
+.back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.detail-card {
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.detail-table th {
+    width: 180px;
+    text-align: right;
+    padding: 0.85rem 1.25rem;
+    background: #f8f9fa;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #555;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+}
+
+.detail-table td {
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid #eee;
+    font-size: 0.95rem;
+}
+
 /* Footer */
 footer {
     text-align: center;
